@@ -1,0 +1,3 @@
+init bcrypt bcryptjs body-parser cors dotenv email express express-fileupload floor fs 
+hash jsonwebtoken math mongoose mongodb multer multipart nodejs nodemailer nodemon
+otp-generator password random referral-codes smtp util utils validator
