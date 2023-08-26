@@ -204,7 +204,7 @@ exports.updateadminProfile = async (req, res) => {
         const profileUrl = `${frontEndUrl}/profile/${req.files.profile[0].filename}`;
         user.profile = profileUrl;
 
-        const UpdateUser = await StudentReg.findByIdAndUpdate(
+        const UpdateUser = await Superuser.findByIdAndUpdate(
           { _id: req.currentAdmin },
           { $set: user },
           { new: true }
@@ -313,7 +313,7 @@ exports.logoutSuperuser = async (req, res) => {
     const superuserId = req.currentAdmin;
     let superuser = await Superuser.findById(superuserId);
 
-    const LogoutUser = await StudentReg.findByIdAndUpdate(
+    const LogoutUser = await Superuser.findByIdAndUpdate(
       { _id: superuser._id },
       { new: true }
     );

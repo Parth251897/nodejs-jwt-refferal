@@ -46,8 +46,7 @@ const clgSchema = new mongoose.Schema(
     document: {
       type: Array,
       required: false,
-    },
-   
+    },  
     otp: {
       type: String,
     },
@@ -63,18 +62,18 @@ const clgSchema = new mongoose.Schema(
       type: String,
     },
     referralCode:{
-      type: Array,
+      type: String,
     },
     // referredEmails:{
     //   type: Array,
     // },
-    referredIds: [{
-      type: mongoose.Schema.Types.ObjectId,
-    }],
-    referredCount: {
-      type: Number,
-      default: 0,
+    referralbyCode:{
+      type: String,
     },
+    referralby:{
+      type: String,
+    },
+
   },
   { versionKey: false }
 );

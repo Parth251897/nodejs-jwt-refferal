@@ -16,6 +16,9 @@ router.post('/logOut', auth, UserController.logOut);
 
 // Find details & Update
 router.get("/studentData", auth, UserController.find);
+router.get("/referal", auth, UserController.referalFind);
+
+
 router.patch("/updateDetails", auth , UserController.dataupdate);
 
 //Delete Student profile

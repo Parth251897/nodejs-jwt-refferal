@@ -7,7 +7,7 @@ const responseMessage = require("../../utils/ResponseMessage.json");
 const StudentReg = require("../../models/User");
 const {
   passwordencrypt,
-  validatePassword,
+  validatePassword,generateRandomAlphaNumeric
 } = require("../../services/CommonService");
 const refferal = require("referral-codes");
 const uploadFile = require("../../middleware/FileUpload");
@@ -67,7 +67,9 @@ exports.create = async (req, res) => {
           return res.status(400).json({ message: "Invalid referral code" });
         }
 
-        const newReferralCode = refferal.generate();
+        const newReferralCode = generateRandomAlphaNumeric(8); 
+        
+
 
         studentid = Math.floor(Math.random().toFixed(4) * 9999);
         userName =
@@ -87,16 +89,17 @@ exports.create = async (req, res) => {
           document: req.documentUrls,
           profile: req.profileUrl,
           referralCode: newReferralCode,
+          referralbyCode: referringUser.referralCode,
+          referralby: referringUser._id,
         });
 
-        newData.save()
-          .then((data) => {
+        newData.save().then((data) => {
             // referringUser.referredEmails.push(email);
             // referringUser.save();
-            referringUser.referredIds.push(data._id);
+            // referringUser.referredIds.push(data._id);
             // referringUser.save();
-            referringUser.referredCount++;
-            referringUser.save();
+            // referringUser.referredCount++;
+            // referringUser.save();
 
             return res.status(201).json({
               status: 201,
@@ -208,6 +211,39 @@ exports.find = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      status: 500,
+      error: true,
+      message: responseMessage.INTERROR,
+    });
+  }
+};
+
+//referance by
+exports.referalFind = async (req, res) => {
+  const { referralby } = req.body;
+  
+  try {
+    let referredStudents = await StudentReg.find({ referralby });
+    
+    if (!referredStudents || referredStudents.length === 0) {
+      return res.status(404).json({
+        status: 404,
+        error: true,
+        message: responseMessage.NOTFOUND,
+      });
+    } else {
+      const totalCount = referredStudents.length;
+
+      res.status(200).json({
+        status: 200,
+        totalCount,
+        referredStudents,
+        message: responseMessage.LOGIN,
+      });
+    }
+  } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       error: true,
