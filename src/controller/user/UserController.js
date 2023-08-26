@@ -224,7 +224,7 @@ exports.referalFind = async (req, res) => {
   const { referralby } = req.body;
   
   try {
-    let referredStudents = await StudentReg.find({ referralby });
+    let referredStudents = await StudentReg.find({ referralby : req.currentUser });
     
     if (!referredStudents || referredStudents.length === 0) {
       return res.status(404).json({
