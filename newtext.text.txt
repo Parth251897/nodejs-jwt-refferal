@@ -28,6 +28,30 @@ exports.findAll = async (req, res) => {
         status: 404,
         error: true,
         message: responseMessage.NOTFOUND,
+      });exports.findAll = async (req, res) => {
+  try {
+    const firstName = req.query.firstName;
+    let pipeline = [];
+
+    if (firstName) {
+      pipeline.push({
+        $match: {
+          firstName: firstName
+        }
+      });
+    }
+
+    pipeline.push({
+      $sort: { lastName: 1 }
+    });
+
+    const allStudents = await StudentReg.aggregate(pipeline);
+
+    if (allStudents.length === 0) {
+      return res.status(404).json({
+        status: 404,
+        error: true,
+        message: responseMessage.NOTFOUND,
       });
     } else {
       res.status(200).json({
