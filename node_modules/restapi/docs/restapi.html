@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Rest Api</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          
+          <h1>Rest Api</h1>
+
+          
+        
+
+        
+      </div>
+
+      
+        
+        <h2>The modules we need</h2>
+
+        
+      
+        
+        
+        
+          <div class='highlight'><pre>request = require <span class="string">'request'</span>
+_       = require <span class="string">'underscore'</span></pre></div>
+        
+      
+        
+        <p>A small module to easily query rest api</p>
+
+        
+          <div class='highlight'><pre><span class="function"><span class="title">encodeUrlParams</span></span> = (params) -&gt;
+  encoded = <span class="string">"?"</span>
+  <span class="keyword">for</span> key, value <span class="keyword">of</span> params
+    encoded += (<span class="keyword">if</span> encoded != <span class="string">"?"</span> <span class="keyword">then</span> <span class="string">"&amp;"</span> <span class="keyword">else</span> <span class="string">""</span>) + <span class="string">"<span class="subst">#{key}</span>=<span class="subst">#{value}</span>"</span>
+  encoded
+
+
+<span class="class"><span class="keyword">class</span> <span class="title">RestApi</span> </span>
+  constructor: (url, options) -&gt; 
+    <span class="property">@url</span> = url
+    <span class="property">@options</span> = options || {}
+
+  get:     (route) -&gt; @.call(<span class="string">"get"</span>,   route)
+  post:    (route) -&gt; @.call(<span class="string">"post"</span>,  route)
+  put:     (route) -&gt; @.call(<span class="string">"put"</span>,   route)
+  <span class="keyword">delete</span>:  (route) -&gt; @.call(<span class="string">"delete"</span>,route)
+
+  call: (verb, route) -&gt; 
+
+    parameters = route.match <span class="regexp">/\:([^\:\/]*)/g</span>
+    parameters = [] <span class="keyword">if</span> <span class="keyword">not</span> parameters
+
+    (params, done) =&gt; 
+
+      params = _.extend(params, <span class="property">@options</span>.params) <span class="keyword">if</span> <span class="property">@options</span>.params?
+
+      <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>..parameters.length]
+        param = parameters[i].replace(<span class="regexp">/\:/</span>, <span class="string">''</span>)
+        route = route.replace <span class="string">":<span class="subst">#{param}</span>"</span>, params[param].toString()
+
+      url = <span class="property">@url</span> 
+      url += route
+      url += <span class="property">@options</span>.suffix <span class="keyword">if</span> <span class="property">@options</span>.suffix? 
+      url += encodeUrlParams(params) <span class="keyword">if</span> verb == <span class="string">"get"</span>
+
+      console.log url
+      query = 
+        url : url
+
+      query.json = params <span class="keyword">if</span> verb == <span class="string">"post"</span>
+
+      request[verb] query, (e, r, body) -&gt;
+        done e, JSON.parse(body)
+
+
+module.exports = RestApi</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
