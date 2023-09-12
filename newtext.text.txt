@@ -1,3 +1,46 @@
 init bcrypt bcryptjs body-parser cors dotenv email express express-fileupload floor fs 
 hash jsonwebtoken math mongoose mongodb multer multipart nodejs nodemailer nodemon
 otp-generator password random referral-codes smtp util utils validator
+
+
+
+exports.findAll = async (req, res) => {
+  try {
+    const {firstName} = req.body; // Assuming you pass the first name as a query parameter
+    let pipeline = [];
+
+    if (firstName) {
+      pipeline.push({
+        $match: {
+          firstName: firstName
+        }
+      });
+    }
+
+    pipeline.push({
+      $sort: { lastName: 1 } // Sort by last name (optional)
+    });
+
+    const allStudents = await StudentReg.aggregate(pipeline);
+
+    if (allStudents.length === 0) {
+      return res.status(404).json({
+        status: 404,
+        error: true,
+        message: responseMessage.NOTFOUND,
+      });
+    } else {
+      res.status(200).json({
+        status: 200,
+        students: allStudents,
+        message: responseMessage.LOGIN,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      error: true,
+      message: responseMessage.INTERROR,
+    });
+  }
+};
